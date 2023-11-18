@@ -11,12 +11,7 @@ const CreateTeam = () => {
   const [scrumMaster, setScrumMaster] = useState("");
   const [productOwner, setProductOwner] = useState("");
   const [developers, setDevelopers] = useState([""]); // Initial state with one developer
-  const [inputValue, setInputValue] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
 
   const handleAddDeveloper = () => {
     setDevelopers([...developers, ""]);
