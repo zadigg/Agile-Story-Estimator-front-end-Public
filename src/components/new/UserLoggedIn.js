@@ -189,8 +189,8 @@ const UserLoggedIn = () => {
     navigate("/");
   };
   return (
-    <>
-      <header className="bg-gradient-to-r from-gray-800 to-gray-600 text-white py-4 px-8 flex justify-between items-center">
+    <div className="flex flex-col h-screen overflow-hidden">
+      <header className=" sticky bg-gradient-to-r from-gray-800 to-gray-600 text-white py-4 px-8 flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-wider">Your App Name</h1>
         <button
           onClick={handleGoToHomePage}
@@ -199,7 +199,7 @@ const UserLoggedIn = () => {
           Home
         </button>
       </header>
-      <section className="bg-gray-100 min-h-screen p-8">
+      <section className="bg-gray-100 min-h-screen p-8 flex-1 overflow-y-scroll">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">
             Welcome, {formatName(userName)}!
@@ -231,21 +231,26 @@ const UserLoggedIn = () => {
                 {teamMembers.map((member, index) => (
                   <div
                     key={index}
-                    className={`card p-2 rounded-lg shadow-md ${
+                    className={`card p-4 rounded-lg shadow-md ${
                       member.status === "Player" ? "bg-white" : "bg-gray-200"
                     } ${member.score !== 0 ? "bg-blue-900 text-gray-100" : ""}`}
                   >
-                    <h2 className="text-lg font-bold mb-1">
-                      {formatName(member.name)}
-                    </h2>
-                    {/*<span className="text-gray-500 text-xs">{member.status}</span>*/}
-                    <span
-                      className={`text-gray-500 text-xs ml-2 ${
-                        member.score !== 0 ? "text-white" : ""
-                      }`}
-                    >
-                      {member.score}
-                    </span>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        {" "}
+                        <h2 className="text-lg font-bold mb-1">
+                          {formatName(member.name)}
+                        </h2>
+                      </div>
+                      <div>
+                        {/*<span className="text-gray-500 text-xs">{member.status}</span>*/}
+                        {showResults && (
+                          <p className="text-gray-100 text-lg font-bold">
+                            {member.score}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ))}
 
@@ -295,7 +300,7 @@ const UserLoggedIn = () => {
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 };
 

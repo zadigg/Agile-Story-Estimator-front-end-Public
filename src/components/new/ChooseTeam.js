@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ChooseTeam = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -76,6 +77,16 @@ const ChooseTeam = () => {
       });
   };
 
+  const handleManageTeams = () => {
+    // Functionality for managing teams, navigate to the appropriate page
+    console.log("Manage Teams...");
+    navigate("/manageTeams", {
+      state: {
+        teamName: selectedOption,
+      },
+    });
+  };
+
   const closeModal = () => {
     setShowModal(false);
   };
@@ -87,7 +98,7 @@ const ChooseTeam = () => {
           Create or Join a Team
         </h2>
         <button
-          className="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full mb-6"
+          className="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full mb-6 hover:bg-blue-600"
           onClick={handleCreateTeam}
         >
           Create Team
@@ -157,6 +168,12 @@ const ChooseTeam = () => {
             </div>
           </div>
         )}
+        <button
+          className="bg-yellow-500 text-white font-bold py-2 px-4 rounded w-full mt-4 hover:bg-yellow-600"
+          onClick={handleManageTeams}
+        >
+          Manage Teams
+        </button>
       </div>
     </section>
   );
