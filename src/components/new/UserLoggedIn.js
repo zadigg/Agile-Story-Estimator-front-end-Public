@@ -35,8 +35,14 @@ const UserLoggedIn = () => {
         const response = await axios.get(
           `http://localhost:8080/api/teams/find/${teamName}`,
         );
-        const { manager, productOwner, scrumMaster, developers } =
-          response.data;
+        console.log("Team members:", response.data);
+        const {
+          revealEstimation,
+          manager,
+          productOwner,
+          scrumMaster,
+          developers,
+        } = response.data;
 
         const spectators = [
           { name: manager.name, status: manager.status, score: manager.score },
@@ -62,6 +68,7 @@ const UserLoggedIn = () => {
 
         setTeamMembers([...spectators, ...activePlayers]);
         setLoading(false); // Data fetched, loading complete
+        setShowResults(revealEstimation);
       } catch (error) {
         console.error("Error fetching team members:", error);
         setLoading(false); // Error occurred, loading complete
@@ -131,8 +138,7 @@ const UserLoggedIn = () => {
   };
 
   const handleRevealEstimations = async () => {
-    setShowResults(true);
-    toggleEstimationReveal(teamName, true);
+    await toggleEstimationReveal(teamName, true);
     console.log("Estimation revealed:", selectedEstimation);
 
     if (!calculationDone) {
@@ -160,7 +166,9 @@ const UserLoggedIn = () => {
       await axios.put(
         `http://localhost:8080/api/teams/${teamName}/resetEstimates`,
       );
-      setShowResults(false);
+      await axios.put(
+        `http://localhost:8080/api/teams/${teamName}/hideEstimations`,
+      );
       console.log("Estimations reset successfully");
     } catch (error) {
       console.error("Error resetting estimations:", error);
@@ -173,9 +181,7 @@ const UserLoggedIn = () => {
   return (
     <section className="bg-gray-100 min-h-screen p-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">
-          Welcome, {userName} {showResults}!
-        </h1>
+        <h1 className="text-3xl font-bold">Welcome, {formatName(userName)}!</h1>
         <div className="space-x-3">
           <button
             onClick={handleResetEstimations}
@@ -205,15 +211,15 @@ const UserLoggedIn = () => {
                   key={index}
                   className={`card p-2 rounded-lg shadow-md ${
                     member.status === "Player" ? "bg-white" : "bg-gray-200"
-                  } ${member.score !== 0 ? "bg-blue-400 text-gray-100" : ""}`}
+                  } ${member.score !== 0 ? "bg-blue-900 text-gray-100" : ""}`}
                 >
                   <h2 className="text-lg font-bold mb-1">
                     {formatName(member.name)}
                   </h2>
-                  <span className="text-gray-500 text-xs">{member.status}</span>
+                  {/*<span className="text-gray-500 text-xs">{member.status}</span>*/}
                   <span
                     className={`text-gray-500 text-xs ml-2 ${
-                      member.score !== 0 ? "text-blue-700" : ""
+                      member.score !== 0 ? "text-white" : ""
                     }`}
                   >
                     {member.score}
