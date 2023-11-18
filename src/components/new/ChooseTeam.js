@@ -92,7 +92,7 @@ const ChooseTeam = () => {
   };
 
   return (
-    <section className="bg-gradient-to-r from-blue-500 to-indigo-600 min-h-screen flex items-center justify-center">
+    <section className="bg-gradient-to-r from-gray-800 to-gray-600 min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-4">
           Create or Join a Team

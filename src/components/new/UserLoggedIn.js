@@ -233,7 +233,7 @@ const UserLoggedIn = () => {
                     key={index}
                     className={`card p-4 rounded-lg shadow-md ${
                       member.status === "Player" ? "bg-white" : "bg-gray-200"
-                    } ${member.score !== 0 ? "bg-blue-900 text-gray-100" : ""}`}
+                    } ${member.score !== 0 ? "bg-blue-800 text-gray-100" : ""}`}
                   >
                     <div className="flex items-center justify-between">
                       <div>

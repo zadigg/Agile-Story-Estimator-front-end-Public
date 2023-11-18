@@ -32,12 +32,12 @@ const CreateTeam = () => {
     try {
       const teamData = {
         teamName: teamName.toLowerCase(),
-        manager: manager.toLowerCase(),
-        productOwner: productOwner.toLowerCase(),
-        scrumMaster: scrumMaster.toLowerCase(),
+        manager: { name: manager.toLowerCase() },
+        productOwner: { name: productOwner.toLowerCase() },
+        scrumMaster: { name: scrumMaster.toLowerCase() },
         developers: developers.map((developer) => ({
           name: developer.toLowerCase(),
-          status: "Active",
+          status: "ACTIVE",
         })),
       };
 
@@ -75,107 +75,122 @@ const CreateTeam = () => {
     navigate("/");
   };
 
-  return (
-    <section className="bg-gradient-to-r from-blue-500 to-indigo-600 min-h-screen flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96 max-h-[600px] overflow-y-auto">
-        <h2 className="text-3xl font-extrabold text-gray-800 mb-4">
-          Create Team
-        </h2>
-        <div className="mb-4">
-          <label className="text-gray-600 block mb-2">Team Name</label>
-          <input
-            type="text"
-            placeholder="Team Name"
-            value={teamName}
-            onChange={(e) => setTeamName(e.target.value)}
-            className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="text-gray-600 block mb-2">Manager</label>
-          <input
-            type="text"
-            placeholder="Manager"
-            value={manager}
-            onChange={(e) => setManager(e.target.value)}
-            className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="text-gray-600 block mb-2">Scrum Master</label>
-          <input
-            type="text"
-            placeholder="Scrum Master"
-            value={scrumMaster}
-            onChange={(e) => setScrumMaster(e.target.value)}
-            className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="text-gray-600 block mb-2">Product Owner</label>
-          <input
-            type="text"
-            placeholder="Product Owner"
-            value={productOwner}
-            onChange={(e) => setProductOwner(e.target.value)}
-            className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="text-gray-600 block mb-2">Developers</label>
-          {developers.map((developer, index) => (
-            <div key={index} className="mb-4 flex items-center">
-              <input
-                type="text"
-                placeholder={`Developer ${index + 1}`}
-                value={developer}
-                onChange={(e) => {
-                  const newDevelopers = [...developers];
-                  newDevelopers[index] = e.target.value;
-                  setDevelopers(newDevelopers);
-                }}
-                className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm mr-2"
-              />
-              <button
-                className="bg-red-500 text-white font-bold py-2 px-3 rounded"
-                onClick={() => handleRemoveDeveloper(index)}
-              >
-                X
-              </button>
-            </div>
-          ))}
-          <button
-            className="bg-green-500 text-white font-bold py-2 px-4 rounded w-full mb-4"
-            onClick={handleAddDeveloper}
-          >
-            + Add Developer
-          </button>
-        </div>
-        <button
-          className="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full"
-          onClick={handleCreateTeam}
-        >
-          Create Team
-        </button>
-      </div>
+  const handleGoToHomePage = () => {
+    navigate("/");
+  };
 
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded-md shadow-md">
-            <p className="text-green-500 text-lg font-semibold mb-4">
-              Team successfully added!
-            </p>
+  return (
+    <div className="flex flex-col h-screen overflow-hidden">
+      <header className=" sticky bg-gradient-to-r from-gray-800 to-gray-600 text-white py-4 px-8 flex justify-between items-center">
+        <h1 className="text-3xl font-bold tracking-wider">Your App Name</h1>
+        <button
+          onClick={handleGoToHomePage}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-all duration-300"
+        >
+          Home
+        </button>
+      </header>
+      <section className="sticky bg-gradient-to-r from-gray-800 to-gray-600 min-h-screen flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-96 max-h-[600px] overflow-y-auto">
+          <h2 className="text-3xl font-extrabold text-gray-800 mb-4">
+            Create Team
+          </h2>
+          <div className="mb-4">
+            <label className="text-gray-600 block mb-2">Team Name</label>
+            <input
+              type="text"
+              placeholder="Team Name"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="text-gray-600 block mb-2">Manager</label>
+            <input
+              type="text"
+              placeholder="Manager"
+              value={manager}
+              onChange={(e) => setManager(e.target.value)}
+              className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="text-gray-600 block mb-2">Scrum Master</label>
+            <input
+              type="text"
+              placeholder="Scrum Master"
+              value={scrumMaster}
+              onChange={(e) => setScrumMaster(e.target.value)}
+              className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="text-gray-600 block mb-2">Product Owner</label>
+            <input
+              type="text"
+              placeholder="Product Owner"
+              value={productOwner}
+              onChange={(e) => setProductOwner(e.target.value)}
+              className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="text-gray-600 block mb-2">Developers</label>
+            {developers.map((developer, index) => (
+              <div key={index} className="mb-4 flex items-center">
+                <input
+                  type="text"
+                  placeholder={`Developer ${index + 1}`}
+                  value={developer}
+                  onChange={(e) => {
+                    const newDevelopers = [...developers];
+                    newDevelopers[index] = e.target.value;
+                    setDevelopers(newDevelopers);
+                  }}
+                  className="w-full p-3 text-gray-600 bg-gray-100 border rounded-md shadow-sm mr-2"
+                />
+                <button
+                  className="bg-red-500 text-white font-bold py-2 px-3 rounded"
+                  onClick={() => handleRemoveDeveloper(index)}
+                >
+                  X
+                </button>
+              </div>
+            ))}
             <button
-              className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
-              onClick={closeModal}
+              className="bg-green-500 text-white font-bold py-2 px-4 rounded w-full mb-4"
+              onClick={handleAddDeveloper}
             >
-              OK
+              + Add Developer
             </button>
           </div>
+          <button
+            className="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full"
+            onClick={handleCreateTeam}
+          >
+            Create Team
+          </button>
         </div>
-      )}
-    </section>
+
+        {/* Success Modal */}
+        {showSuccessModal && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
+            <div className="bg-white p-6 rounded-md shadow-md">
+              <p className="text-green-500 text-lg font-semibold mb-4">
+                Team successfully added!
+              </p>
+              <button
+                className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                onClick={closeModal}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
+    </div>
   );
 };
 
