@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FingerprintSpinner } from "react-epic-spinners";
 import MemberStatus from "../../enums/MemberStatus";
 
 const UserLoggedIn = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const userName = location.state?.userName;
   const teamName = location.state?.teamName;
   const [teamMembers, setTeamMembers] = useState([]);
@@ -80,30 +81,35 @@ const UserLoggedIn = () => {
     return () => clearInterval(intervalId);
   }, [teamName, userName]);
 
-  useEffect(() => {
-    const handleUnload = async () => {
-      try {
-        await axios.put(
-          `http://localhost:8080/api/teams/updateStatus/inactive/${teamName}/users/${userName}`,
-        );
-      } catch (error) {
-        console.error("Error updating user status to inactive:", error);
-      }
-    };
+  const handleUnload = async () => {
+    try {
+      await axios.put(
+        `http://localhost:8080/api/teams/updateStatus/inactive/${teamName}/users/${userName}`,
+      );
+    } catch (error) {
+      console.error("Error updating user status to inactive:", error);
+    }
+  };
 
+  // Update user status to inactive when the user closes the tab
+  useEffect(() => {
     const handleBeforeUnload = (event) => {
       event.preventDefault();
-      handleUnload();
+      handleUnload().then((r) =>
+        console.log("User status updated to inactive"),
+      );
       event.returnValue = "";
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
+      handleUnload(); // Update status before leaving the page
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [userName, teamName]);
 
+  // Update user score when the user selects an estimation
   const updateScore = async (userName, score) => {
     try {
       await axios.put(
@@ -178,97 +184,118 @@ const UserLoggedIn = () => {
     }
   };
 
+  const handleGoToHomePage = () => {
+    handleUnload().then((r) => console.log("User status updated to inactive"));
+    navigate("/");
+  };
   return (
-    <section className="bg-gray-100 min-h-screen p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Welcome, {formatName(userName)}!</h1>
-        <div className="space-x-3">
-          <button
-            onClick={handleResetEstimations}
-            className="bg-blue-500 text-white font-bold py-2 px-4 rounded bg-red-600"
-          >
-            Reset Estimations
-          </button>
-          <button
-            onClick={handleRevealEstimations}
-            className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
-          >
-            Reveal Estimations
-          </button>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center h-96 p-8">
-          <FingerprintSpinner color="green" />
-        </div>
-      ) : (
-        <div>
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-8">
-              {teamMembers.map((member, index) => (
-                <div
-                  key={index}
-                  className={`card p-2 rounded-lg shadow-md ${
-                    member.status === "Player" ? "bg-white" : "bg-gray-200"
-                  } ${member.score !== 0 ? "bg-blue-900 text-gray-100" : ""}`}
-                >
-                  <h2 className="text-lg font-bold mb-1">
-                    {formatName(member.name)}
-                  </h2>
-                  {/*<span className="text-gray-500 text-xs">{member.status}</span>*/}
-                  <span
-                    className={`text-gray-500 text-xs ml-2 ${
-                      member.score !== 0 ? "text-white" : ""
-                    }`}
-                  >
-                    {member.score}
-                  </span>
-                </div>
-              ))}
-
-              <div className="md:col-span-3">
-                <div className="flex flex-wrap gap-4 justify-center">
-                  {fibonacciNumbers.map((number) => (
-                    <button
-                      key={number}
-                      onClick={() => handleEstimationSelection(number)}
-                      className={`estimation-button bg-blue-200 text-blue-700 font-bold py-2 px-4 rounded transition-colors duration-300 hover:bg-blue-300 w-full md:w-auto`}
-                    >
-                      {number}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-4 md:w-1/3">
-              {!showResults && (
-                <div className="w-full bg-white p-6 rounded-lg shadow-md">
-                  <h2 className="text-lg font-bold mb-4">Estimation Results</h2>
-                  <p>No data available</p>
-                </div>
-              )}
-
-              {showResults && teamMembers.length > 0 && (
-                <div className="w-full bg-white p-6 rounded-lg shadow-md">
-                  <h2 className="text-lg font-bold mb-4">Estimation Results</h2>
-                  <p>Average Score: {calculateAverageScore()}</p>
-                  <p>
-                    Disagreement Level: {calculateDisagreementLevel()}{" "}
-                    {calculateDisagreementLevel() === "High" && (
-                      <span role="img" aria-label="warning">
-                        ⚠️
-                      </span>
-                    )}
-                  </p>
-                </div>
-              )}
-            </div>
+    <>
+      <header className="bg-gradient-to-r from-gray-800 to-gray-600 text-white py-4 px-8 flex justify-between items-center">
+        <h1 className="text-3xl font-bold tracking-wider">Your App Name</h1>
+        <button
+          onClick={handleGoToHomePage}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-all duration-300"
+        >
+          Home
+        </button>
+      </header>
+      <section className="bg-gray-100 min-h-screen p-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">
+            Welcome, {formatName(userName)}!
+          </h1>
+          <div className="space-x-3">
+            <button
+              onClick={handleResetEstimations}
+              className="bg-blue-500 text-white font-bold py-2 px-4 rounded bg-red-600"
+            >
+              Reset Estimations
+            </button>
+            <button
+              onClick={handleRevealEstimations}
+              className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+            >
+              Reveal Estimations
+            </button>
           </div>
         </div>
-      )}
-    </section>
+
+        {loading ? (
+          <div className="flex justify-center items-center h-96 p-8">
+            <FingerprintSpinner color="green" />
+          </div>
+        ) : (
+          <div>
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-8">
+                {teamMembers.map((member, index) => (
+                  <div
+                    key={index}
+                    className={`card p-2 rounded-lg shadow-md ${
+                      member.status === "Player" ? "bg-white" : "bg-gray-200"
+                    } ${member.score !== 0 ? "bg-blue-900 text-gray-100" : ""}`}
+                  >
+                    <h2 className="text-lg font-bold mb-1">
+                      {formatName(member.name)}
+                    </h2>
+                    {/*<span className="text-gray-500 text-xs">{member.status}</span>*/}
+                    <span
+                      className={`text-gray-500 text-xs ml-2 ${
+                        member.score !== 0 ? "text-white" : ""
+                      }`}
+                    >
+                      {member.score}
+                    </span>
+                  </div>
+                ))}
+
+                <div className="md:col-span-3">
+                  <div className="flex flex-wrap gap-4 justify-center">
+                    {fibonacciNumbers.map((number) => (
+                      <button
+                        key={number}
+                        onClick={() => handleEstimationSelection(number)}
+                        className={`estimation-button bg-blue-200 text-blue-700 font-bold py-2 px-4 rounded transition-colors duration-300 hover:bg-blue-300 w-full md:w-auto`}
+                      >
+                        {number}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4 md:w-1/3">
+                {!showResults && (
+                  <div className="w-full bg-white p-6 rounded-lg shadow-md">
+                    <h2 className="text-lg font-bold mb-4">
+                      Estimation Results
+                    </h2>
+                    <p>No data available</p>
+                  </div>
+                )}
+
+                {showResults && teamMembers.length > 0 && (
+                  <div className="w-full bg-white p-6 rounded-lg shadow-md">
+                    <h2 className="text-lg font-bold mb-4">
+                      Estimation Results
+                    </h2>
+                    <p>Average Score: {calculateAverageScore()}</p>
+                    <p>
+                      Disagreement Level: {calculateDisagreementLevel()}{" "}
+                      {calculateDisagreementLevel() === "High" && (
+                        <span role="img" aria-label="warning">
+                          ⚠️
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+    </>
   );
 };
 
