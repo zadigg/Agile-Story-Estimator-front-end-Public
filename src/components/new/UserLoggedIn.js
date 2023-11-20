@@ -27,12 +27,25 @@ const UserLoggedIn = () => {
     }
   };
 
+  //update the user to active only when the page loads
   useEffect(() => {
     const fetchData = async () => {
       try {
         await axios.put(
           `http://localhost:8080/api/teams/updateStatus/active/${teamName}/users/${userName}`,
         );
+        console.log("Status updated successfully");
+      } catch (error) {
+        console.error("Error updating status:", error);
+      }
+    };
+
+    fetchData(); // Execute the function once on page load
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
         const response = await axios.get(
           `http://localhost:8080/api/teams/find/${teamName}`,
         );
